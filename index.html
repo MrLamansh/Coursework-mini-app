@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Диспетчер 24</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Подключение Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
 </head>
 <body>
     <h1>Диспетчер 24 для ТСЖ</h1>
@@ -22,10 +25,40 @@
         <button type="submit">Отправить</button>
     </form>
     <script>
+        // Инициализация Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpCysz2c3SnWOUTLpf2JburDdgujMaktc",
+            authDomain: "courseworktsj.firebaseapp.com",
+            projectId: "courseworktsj",
+            storageBucket: "courseworktsj.firebasestorage.app",
+            messagingSenderId: "578999928624",
+            appId: "1:578999928624:web:dcffcb1c5d49bbd11faaf5"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         window.Telegram.WebApp.ready();
         document.getElementById('requestForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Заявка отправлена!'); // Временное уведомление
+            const type = document.getElementById('type').value;
+            const description = document.getElementById('description').value;
+            const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || 'unknown';
+
+            // Сохранение заявки в Firestore
+            db.collection('requests').add({
+                type: type,
+                description: description,
+                userId: userId,
+                status: 'new',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert('Заявка успешно отправлена!');
+                document.getElementById('requestForm').reset();
+            })
+            .catch((error) => {
+                alert('Ошибка: ' + error.message);
+            });
         });
     </script>
 </body>
