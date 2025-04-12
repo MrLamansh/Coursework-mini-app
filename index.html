@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диспетчер 24</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <h1>Диспетчер 24 для ТСЖ</h1>
+    <form id="requestForm">
+        <label for="type">Тип заявки:</label>
+        <select id="type" name="type">
+            <option value="repair">Ремонт</option>
+            <option value="complaint">Жалоба</option>
+            <option value="other">Другое</option>
+        </select>
+        <br>
+        <label for="description">Описание:</label>
+        <textarea id="description" name="description" required></textarea>
+        <br>
+        <button type="submit">Отправить</button>
+    </form>
+    <script>
+        window.Telegram.WebApp.ready();
+        document.getElementById('requestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Заявка отправлена!'); // Временное уведомление
+        });
+    </script>
+</body>
+</html>
