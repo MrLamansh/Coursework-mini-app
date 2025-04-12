@@ -25,41 +25,52 @@
         <button type="submit">Отправить</button>
     </form>
     <script>
-        // Инициализация Firebase
-        const firebaseConfig = {
-            apiKey: "AIzSyBpCysz2c3SnWOUTLpf2JburDdgujMaktc",
-            authDomain: "courseworktsj.firebaseapp.com",
-            projectId: "courseworktsj",
-            storageBucket: "courseworktsj.firebasestorage.app",
-            messagingSenderId: "578999928624",
-            appId: "1:578999928624:web:dcffcb1c5d49bbd11faaf5"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    // Инициализация Firebase
+    const firebaseConfig = {
+        apiKey: "AIzSyBpCysz2c3SnWOUTLpf2JburDdgujMaktc",
+        authDomain: "courseworktsj.firebaseapp.com",
+        projectId: "courseworktsj",
+        storageBucket: "courseworktsj.firebasestorage.app",
+        messagingSenderId: "578999928624",
+        appId: "1:578999928624:web:dcffcb1c5d49bbd11faaf5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        window.Telegram.WebApp.ready();
-        document.getElementById('requestForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const type = document.getElementById('type').value;
-            const description = document.getElementById('description').value;
-            const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || 'unknown';
+    // Тестовая запись
+    db.collection('test').add({
+        message: 'Это тестовая запись',
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+        console.log('Тестовая запись добавлена!');
+    })
+    .catch((error) => {
+        console.error('Ошибка теста: ', error);
+    });
 
-            // Сохранение заявки в Firestore
-            db.collection('requests').add({
-                type: type,
-                description: description,
-                userId: userId,
-                status: 'new',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                alert('Заявка успешно отправлена!');
-                document.getElementById('requestForm').reset();
-            })
-            .catch((error) => {
-                alert('Ошибка: ' + error.message);
-            });
+    window.Telegram.WebApp.ready();
+    document.getElementById('requestForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const type = document.getElementById('type').value;
+        const description = document.getElementById('description').value;
+        const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || 'unknown';
+
+        db.collection('requests').add({
+            type: type,
+            description: description,
+            userId: userId,
+            status: 'new',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+            alert('Заявка успешно отправлена!');
+            document.getElementById('requestForm').reset();
+        })
+        .catch((error) => {
+            alert('Ошибка: ' + error.message);
         });
-    </script>
+    });
+</script>
 </body>
 </html>
