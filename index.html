@@ -25,10 +25,8 @@
             <button type="submit">Отправить</button>
         </form>
         <button onclick="showHelp()">Помощь</button>
-        <button onclick="showContextHelp()">Контекстная справка</button>
     </div>
     <script>
-        // Инициализация Firebase
         const firebaseConfig = {
             apiKey: "AIzSyBpCysz2c3SnWOUTLpf2JburDdgujMaktc",
             authDomain: "courseworktsj.firebaseapp.com",
@@ -42,7 +40,6 @@
 
         window.Telegram.WebApp.ready();
 
-        // Отправка заявки
         document.getElementById('requestForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('type').value;
@@ -65,16 +62,8 @@
             });
         });
 
-        // Функция для кнопки "Помощь"
         function showHelp() {
-            window.Telegram.WebApp.sendData(JSON.stringify({ command: '/help' }));
-        }
-
-        // Функция для контекстной справки
-        function showContextHelp() {
-            const activeScreen = document.querySelector('#main-screen');
-            const helpId = activeScreen.getAttribute('data-help-id') || 'HELP_MAIN_MENU';
-            window.Telegram.WebApp.sendData(JSON.stringify({ command: '/context', helpId }));
+            window.Telegram.WebApp.openLink('https://yourusername.github.io/D24TSZH/webapp/download.html');
         }
     </script>
 </body>
