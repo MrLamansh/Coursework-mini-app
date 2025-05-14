@@ -6,7 +6,7 @@ const token = '7602273744:AAHPWp0dcPIBa4UEtkXpFHssJ96WlZI7_TE'; // Замени�
 const bot = new TelegramBot(token, { polling: true });
 const chmPath = path.join(__dirname, 'help', 'проверка.chm');
 const cloudLink = 'https://disk.yandex.ru/d/-hNkZ9EVyGhm-Q'; // Заменить на реальную ссылку
-const webAppUrl = 'https://username.github.io/D24TSZH/index.html'; // Заменить на URL GitHub Pages
+const webAppUrl = 'https://github.com/MrLamansh/Coursework-mini-app/blob/main/index.html'; // Заменить на URL GitHub Pages
 
 // Обработка команды /start
 bot.onText(/\/start/, (msg) => {
