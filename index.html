@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Диспетчер 24</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Подключение Firebase (версия 8) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
     <h1>Диспетчер 24 для ТСЖ</h1>
-    <form id="requestForm">
-        <label for="type">Тип заявки:</label>
-        <select id="type" name="type">
-            <option value="repair">Ремонт</option>
-            <option value="complaint">Жалоба</option>
-            <option value="other">Другое</option>
-        </select>
-        <br>
-        <label for="description">Описание:</label>
-        <textarea id="description" name="description" required></textarea>
-        <br>
-        <button type="submit">Отправить</button>
-    </form>
+    <div id="main-screen" data-help-id="HELP_MAIN_MENU">
+        <form id="requestForm">
+            <label for="type">Тип заявки:</label>
+            <select id="type" name="type">
+                <option value="repair">Ремонт</option>
+                <option value="complaint">Жалоба</option>
+                <option value="other">Другое</option>
+            </select>
+            <br>
+            <label for="description">Описание:</label>
+            <textarea id="description" name="description" required></textarea>
+            <br>
+            <button type="submit">Отправить</button>
+        </form>
+        <button onclick="showHelp()">Помощь</button>
+        <button onclick="showContextHelp()">Контекстная справка</button>
+    </div>
     <script>
         // Инициализация Firebase
         const firebaseConfig = {
@@ -38,13 +41,14 @@
         const db = firebase.firestore();
 
         window.Telegram.WebApp.ready();
+
+        // Отправка заявки
         document.getElementById('requestForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('type').value;
             const description = document.getElementById('description').value;
             const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || 'unknown';
 
-            // Сохранение заявки в Firestore
             db.collection('requests').add({
                 type: type,
                 description: description,
@@ -60,6 +64,18 @@
                 alert('Ошибка: ' + error.message);
             });
         });
+
+        // Функция для кнопки "Помощь"
+        function showHelp() {
+            window.Telegram.WebApp.sendData(JSON.stringify({ command: '/help' }));
+        }
+
+        // Функция для контекстной справки
+        function showContextHelp() {
+            const activeScreen = document.querySelector('#main-screen');
+            const helpId = activeScreen.getAttribute('data-help-id') || 'HELP_MAIN_MENU';
+            window.Telegram.WebApp.sendData(JSON.stringify({ command: '/context', helpId }));
+        }
     </script>
 </body>
 </html>
