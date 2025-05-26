@@ -1,31 +1,106 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Диспетчер 24</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        /* Безопасная цветовая палитра */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* светлый голубой фон */
+            color: #003366; /* темно-синий цвет текста */
+            margin: 20px;
+        }
+        h1 {
+            color: #004080;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #main-screen {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #cce0ff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 8px rgba(0, 64, 128, 0.2);
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        select, textarea, button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #99c2ff;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #003366;
+            background-color: #e6f0ff;
+            transition: background-color 0.3s ease;
+        }
+        select:focus, textarea:focus {
+            background-color: #cce0ff;
+            outline: none;
+            border-color: #3366cc;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        button[type="submit"] {
+            background-color: #3366cc;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #003366;
+        }
+        button[onclick] {
+            background-color: #99c2ff;
+            color: #003366;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            width: auto;
+        }
+        button[onclick]:hover {
+            background-color: #668cff;
+        }
+    </style>
 </head>
 <body>
     <h1>Диспетчер 24 для ТСЖ</h1>
     <div id="main-screen" data-help-id="HELP_MAIN_MENU">
         <form id="requestForm">
             <label for="type">Тип заявки:</label>
-            <select id="type" name="type">
+            <select id="type" name="type" required>
                 <option value="repair">Ремонт</option>
                 <option value="complaint">Жалоба</option>
                 <option value="other">Другое</option>
             </select>
-            <br>
+
             <label for="description">Описание:</label>
             <textarea id="description" name="description" required></textarea>
-            <br>
+
             <button type="submit">Отправить</button>
         </form>
         <button onclick="showHelp()">Помощь</button>
     </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzSyBpCysz2c3SnWOUTLpf2JburDdgujMaktc",
@@ -43,7 +118,11 @@
         document.getElementById('requestForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('type').value;
-            const description = document.getElementById('description').value;
+            const description = document.getElementById('description').value.trim();
+            if (!description) {
+                alert('Пожалуйста, введите описание.');
+                return;
+            }
             const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || 'unknown';
 
             db.collection('requests').add({
