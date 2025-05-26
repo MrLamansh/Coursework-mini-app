@@ -63,8 +63,12 @@
             border: none;
             transition: background-color 0.3s ease;
         }
-        button[type="submit"]:hover {
+        button[type="submit"]:hover:not(:disabled) {
             background-color: #003366;
+        }
+        button[type="submit"]:disabled {
+            background-color: #99c2ff;
+            cursor: not-allowed;
         }
         button[onclick] {
             background-color: #99c2ff;
@@ -80,12 +84,18 @@
         button[onclick]:hover {
             background-color: #668cff;
         }
+        #statusMessage {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #004080;
+        }
     </style>
 </head>
 <body>
     <h1>Диспетчер 24 для ТСЖ</h1>
     <div id="main-screen" data-help-id="HELP_MAIN_MENU">
-        <form id="requestForm">
+        <form id="requestForm" novalidate>
             <label for="type">Тип заявки:</label>
             <select id="type" name="type" required>
                 <option value="repair">Ремонт</option>
@@ -94,14 +104,17 @@
             </select>
 
             <label for="description">Описание:</label>
-            <textarea id="description" name="description" required></textarea>
+            <textarea id="description" name="description" required placeholder="Опишите проблему"></textarea>
 
-            <button type="submit">Отправить</button>
+            <button type="submit" id="submitBtn">Отправить</button>
         </form>
-        <button onclick="showHelp()">Помощь</button>
+        <button type="button" onclick="showHelp()">Помощь</button>
+
+        <div id="statusMessage" aria-live="polite"></div>
     </div>
 
     <script>
+        // Инициализация Firebase
         const firebaseConfig = {
             apiKey: "AIzSyBpCysz2c3SnWOUTLpf2JburDdgujMaktc",
             authDomain: "courseworktsj.firebaseapp.com",
@@ -113,32 +126,54 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Инициализация Telegram WebApp
         window.Telegram.WebApp.ready();
 
-        document.getElementById('requestForm').addEventListener('submit', function(e) {
+        const form = document.getElementById('requestForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const type = document.getElementById('type').value;
-            const description = document.getElementById('description').value.trim();
+
+            // Очистить статус
+            statusMessage.textContent = '';
+
+            // Получаем значения формы
+            const type = form.type.value;
+            const description = form.description.value.trim();
+
             if (!description) {
                 alert('Пожалуйста, введите описание.');
+                form.description.focus();
                 return;
             }
-            const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || 'unknown';
 
-            db.collection('requests').add({
-                type: type,
-                description: description,
-                userId: userId,
-                status: 'new',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                alert('Заявка успешно отправлена!');
-                document.getElementById('requestForm').reset();
-            })
-            .catch((error) => {
-                alert('Ошибка: ' + error.message);
-            });
+            // Блокируем кнопку во время отправки
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+
+            try {
+                const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || 'unknown';
+
+                await db.collection('requests').add({
+                    type,
+                    description,
+                    userId,
+                    status: 'new',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                statusMessage.textContent = 'Заявка успешно отправлена! Спасибо.';
+                form.reset();
+                form.type.focus();
+
+            } catch (error) {
+                alert('Ошибка при отправке заявки: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить';
+            }
         });
 
         function showHelp() {
