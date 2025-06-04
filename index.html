@@ -117,6 +117,10 @@
       button.classList.add('active');
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.getElementById(tab).classList.add('active');
+
+      if (tab === 'listTab') {
+        listenRequests(); // Запуск подписки на заявки
+      }
     });
   });
 
@@ -133,18 +137,24 @@
     submitBtn.textContent = 'Отправка...';
 
     try {
-      await db.collection('requests').add({
+      // Добавление заявки в базу данных
+      const docRef = await db.collection('requests').add({
         type,
         description,
-        userId,
+        userId,  // Добавляем userId, чтобы заявка была привязана к конкретному пользователю
         status: 'new',
         comments: [],
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
+
       form.reset();
       showNotification('Заявка успешно отправлена!');
-      // Переключаемся на вкладку "Мои заявки"
+      // Переключаемся на вкладку "Мои заявки" и сразу обновляем список
       document.querySelector('[data-tab="listTab"]').click();
+
+      // Обновляем список заявок, добавив только что отправленную заявку
+      listenRequests();
+
     } catch (error) {
       alert('Ошибка при отправке заявки: ' + error.message);
     } finally {
@@ -164,63 +174,35 @@
   // Подписка на заявки пользователя (реальное время)
   function listenRequests() {
     return db.collection('requests')
-      .where('userId', '==', userId)
+      .where('userId', '==', userId)  // Фильтруем заявки по userId
       .orderBy('timestamp', 'desc')
       .onSnapshot(snapshot => {
         if (snapshot.empty) {
           requestsList.innerHTML = '<p>Заявок нет.</p>';
           return;
         }
-        renderRequests(snapshot.docs);
+        renderRequests(snapshot.docs);  // Рендерим заявки
       });
   }
 
+  // Функция для рендеринга списка заявок
   function renderRequests(docs) {
-    requestsList.innerHTML = '';
+    requestsList.innerHTML = ''; // Очищаем текущий список перед добавлением новых данных
     docs.forEach(doc => {
-      const req = doc.data();
-      const id = doc.id;
-      const commentsHtml = (req.comments || []).map(c => `<div class="comment">${c}</div>`).join('');
-      requestsList.innerHTML += `
-        <div class="request-item" data-id="${id}">
-          <div><b>Тип:</b> ${typeTranslations[req.type] || req.type}</div>
-          <div><b>Описание:</b> ${req.description}</div>
-          <div class="status"><b>Статус:</b> ${req.status}</div>
-          <div class="comments"><b>Комментарии:</b>${commentsHtml || ' нет'}</div>
-          <textarea placeholder="Добавить комментарий" rows="2" class="comment-input"></textarea>
-          <button onclick="addComment('${id}')">Отправить комментарий</button>
-        </div>`;
+      const data = doc.data();
+      const requestElement = document.createElement('div');
+      requestElement.classList.add('request-item');
+      requestElement.innerHTML = `
+        <p><strong>Тип заявки:</strong> ${typeTranslations[data.type]}</p>
+        <p><strong>Описание:</strong> ${data.description}</p>
+        <p><strong>Статус:</strong> <span class="status">${data.status}</span></p>
+        <div class="comments">
+          ${data.comments.map(comment => `<p class="comment">${comment}</p>`).join('')}
+        </div>
+      `;
+      requestsList.appendChild(requestElement);
     });
   }
-
-  async function addComment(id) {
-    const item = document.querySelector(`.request-item[data-id="${id}"]`);
-    const textarea = item.querySelector('.comment-input');
-    const text = textarea.value.trim();
-    if (!text) {
-      alert('Введите текст комментария');
-      return;
-    }
-    textarea.disabled = true;
-    try {
-      const docRef = db.collection('requests').doc(id);
-      await docRef.update({
-        comments: firebase.firestore.FieldValue.arrayUnion(text)
-      });
-      textarea.value = '';
-      showNotification('Комментарий добавлен');
-    } catch (error) {
-      alert('Ошибка при добавлении комментария: ' + error.message);
-    } finally {
-      textarea.disabled = false;
-    }
-  }
-
-  function showHelp() {
-    window.Telegram.WebApp.openLink('https://disk.yandex.ru/d/-hNkZ9EVyGhm-Q');
-  }
-
-  listenRequests();
 </script>
 </body>
 </html>
