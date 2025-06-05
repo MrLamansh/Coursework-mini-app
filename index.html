@@ -62,6 +62,7 @@
       <select id="type" name="type" required>
         <option value="repair">Ремонт</option>
         <option value="complaint">Жалоба</option>
+        <option value="advice">Предложение</option>
         <option value="other">Другое</option>
       </select>
 
@@ -106,6 +107,7 @@
   const typeTranslations = {
     repair: 'Ремонт',
     complaint: 'Жалоба',
+    advice: 'Предложение',
     other: 'Другое'
   };
 
@@ -195,8 +197,8 @@
 
   // Функция для рендеринга списка заявок
   function renderRequests(docs) {
-    console.log('Рендеринг заявок:', docs); // Логируем перед рендерингом
-    requestsList.innerHTML = ''; // Очищаем текущий список перед добавлением новых данных
+    console.log('Рендеринг заявок:', docs);
+    requestsList.innerHTML = '';
     docs.forEach(doc => {
       const data = doc.data();
       const requestElement = document.createElement('div');
