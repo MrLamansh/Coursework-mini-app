@@ -171,12 +171,20 @@
     }, 4000);
   }
 
+  // Переход на скачивание справки
+  function showHelp() {
+    // Перенаправление на URL для скачивания документации
+    window.location.href = 'https://disk.yandex.ru/d/-hNkZ9EVyGhm-Q';
+}
+
   // Подписка на заявки пользователя (реальное время)
   function listenRequests() {
+    console.log('Подключаем слушатель заявок...'); // Логируем, что мы начинаем слушать
     return db.collection('requests')
       .where('userId', '==', userId)  // Фильтруем заявки по userId
       .orderBy('timestamp', 'desc')
       .onSnapshot(snapshot => {
+        console.log('Получены данные:', snapshot.docs); // Логируем полученные данные
         if (snapshot.empty) {
           requestsList.innerHTML = '<p>Заявок нет.</p>';
           return;
@@ -187,6 +195,7 @@
 
   // Функция для рендеринга списка заявок
   function renderRequests(docs) {
+    console.log('Рендеринг заявок:', docs); // Логируем перед рендерингом
     requestsList.innerHTML = ''; // Очищаем текущий список перед добавлением новых данных
     docs.forEach(doc => {
       const data = doc.data();
