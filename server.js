@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 const token = '7602273744:AAHPWp0dcPIBa4UEtkXpFHssJ96WlZI7_TE';
 const bot = new TelegramBot(token, { polling: true });
-const webAppUrl = 'https://github.com/MrLamansh/Coursework-mini-app/blob/main/index.html'; // Заменить на ваш URL
+const webAppUrl = 'https://github.com/MrLamansh/Coursework-mini-app/blob/main/index.html';
 
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;

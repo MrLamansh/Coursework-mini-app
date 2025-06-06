@@ -1,0 +1,39 @@
+.hidden {
+    display: none;
+}
+
+  body { font-family: Arial, sans-serif; background-color: #f0f8ff; color: #003366; margin: 20px; }
+  h1 { color: #004080; text-align: center; }
+  #main-screen { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 8px rgba(0,64,128,0.2); }
+  label { display: block; margin: 6px 0 3px; font-weight: bold; }
+  select, textarea, button, input { width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #99c2ff; background-color: #e6f0ff; color: #003366; font-size: 14px; box-sizing: border-box; }
+  select:focus, textarea:focus, input:focus { background-color: #cce0ff; outline: none; border-color: #3366cc; }
+  button { cursor: pointer; border: none; background-color: #3366cc; color: white; font-weight: bold; transition: background-color 0.3s; }
+  button:hover:not(:disabled) { background-color: #003366; }
+  button:disabled { background-color: #99c2ff; cursor: not-allowed; }
+  .request-item { border: 1px solid #99c2ff; padding: 10px; margin-bottom: 10px; border-radius: 5px; background-color: #f9fbff; }
+  .status { font-weight: bold; color: #004080; }
+  .comments { margin-top: 5px; font-size: 13px; background: #dbe9ff; padding: 5px; border-radius: 4px; max-height: 100px; overflow-y: auto; }
+  .comment { margin-bottom: 3px; }
+  #notification { background: #fffae6; border: 1px solid #ffe58f; color: #856404; padding: 10px; margin-bottom: 15px; border-radius: 4px; display: none; }
+  /* Вкладки */
+  .tabs { display: flex; justify-content: center; margin-bottom: 20px; }
+  .tab-button { padding: 10px 20px; border: none; background: #99c2ff; color: #003366; cursor: pointer; font-weight: bold; border-radius: 5px 5px 0 0; margin: 0 5px; }
+  .tab-button.active { background: #3366cc; color: white; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  /* Кнопка помощь */
+  #helpButton {
+    background-color: #99c2ff;
+    color: #003366;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    width: auto;
+  }
+  #helpButton:hover {
+    background-color: #668cff;
+  }
