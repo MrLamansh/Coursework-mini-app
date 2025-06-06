@@ -1,5 +1,6 @@
  // Firebase config и инициализация
-  const firebaseConfig = {
+  const firebaseConfig =
+  {
     apiKey: "AIzSyBpCysz2c3SnWOUTLpf2JburDdgujMaktc",
     authDomain: "courseworktsj.firebaseapp.com",
     projectId: "courseworktsj",
@@ -19,7 +20,8 @@
 
   const userId = window.Telegram.WebApp.initDataUnsafe.user?.id || 'unknown';
 
-  const typeTranslations = {
+  const typeTranslations =
+  {
     repair: 'Ремонт',
     complaint: 'Жалоба',
     advice: 'Предложение',
@@ -27,7 +29,8 @@
   };
 
   // Обработчик вкладок
-  document.querySelectorAll('.tab-button').forEach(button => {
+  document.querySelectorAll('.tab-button').forEach(button =>
+  {
     button.addEventListener('click', () => {
       const tab = button.getAttribute('data-tab');
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
@@ -41,7 +44,8 @@
     });
   });
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', async (e) =>
+  {
     e.preventDefault();
     const type = form.type.value;
     const description = form.description.value.trim();
@@ -53,9 +57,11 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Отправка...';
 
-    try {
+    try
+    {
       // Добавление заявки в базу данных
-      const docRef = await db.collection('requests').add({
+      const docRef = await db.collection('requests').add(
+      {
         type,
         description,
         userId,  // Добавляем userId, чтобы заявка была привязана к конкретному пользователю
@@ -80,7 +86,8 @@
     }
   });
 
-  function showNotification(message) {
+  function showNotification(message)
+  {
     notification.textContent = message;
     notification.style.display = 'block';
     setTimeout(() => {
@@ -89,7 +96,8 @@
   }
 
   // Переход на скачивание справки
-  function showHelp() {
+  function showHelp()
+  {
     // Перенаправление на URL для скачивания документации
      window.open('https://disk.yandex.ru/d/-hNkZ9EVyGhm-Q', '_blank');
 }
@@ -111,7 +119,8 @@
   }
 
   // Функция для рендеринга списка заявок
-  function renderRequests(docs) {
+  function renderRequests(docs)
+  {
     console.log('Рендеринг заявок:', docs);
     requestsList.innerHTML = '';
     docs.forEach(doc => {
