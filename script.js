@@ -236,5 +236,5 @@ document.getElementById('logout-admin').addEventListener('click', () => {
 
 // Функционал кнопки справка
 document.getElementById('helpButton').onclick = function() {
-  window.open('https://disk.yandex.ru/d/-hNkZ9EVyGhm-Q', '_blank');
+  window.open('https://disk.360.yandex.ru/i/BsFF0GbuZjBlmw', '_blank');
 };
